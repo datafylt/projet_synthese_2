@@ -1,15 +1,10 @@
-name: Python application
+name: Gear Analysis
+on: [push]
 
-on:
-  push:
-    branches:
-    - master
-  pull_request:
-    branches:
-    - master
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [ ubuntu-latest ]
+    container: docker://dvcorg/cml:latest
     steps:
     - uses: actions/checkout@v2
       with:
