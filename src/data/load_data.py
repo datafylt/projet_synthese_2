@@ -1,6 +1,10 @@
+import os
+import shutil
+
 import yaml
 import argparse
-import pandas as pd 
+import pandas as pd
+
 
 def read_params(config_path):
     """
@@ -12,16 +16,28 @@ def read_params(config_path):
         config = yaml.safe_load(yaml_file)
     return config
 
-def load_data(data_path,model_var):
+
+def copy_raw_to_processed(src, dst):
     """
-    load csv dataset from given path
-    input: csv path 
-    output:pandas dataframe 
-    note: Only 6 variables are used in this model building stage for the simplicity.
-    """
-    df = pd.read_csv(data_path, sep=",", encoding='utf-8')
-    df=df[model_var]
-    return df
+        Copy a folder from src to dst with more control.
+        :param src: Source directory path.
+        :param dst: Destination directory path.
+        """
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+
+    for root, dirs, files in os.walk(src):
+        # For each directory in the source, create a corresponding directory in the destination
+        for dir in dirs:
+            dir_to_create = os.path.join(dst, os.path.relpath(os.path.join(root, dir), src))
+            os.makedirs(dir_to_create, exist_ok=True)
+
+        # For each file in the source, copy it to the corresponding location in the destination
+        for file in files:
+            src_file = os.path.join(root, file)
+            dst_file = os.path.join(dst, os.path.relpath(src_file, src))
+            shutil.copy2(src_file, dst_file)
+
 
 def load_raw_data(config_path):
     """
@@ -29,14 +45,14 @@ def load_raw_data(config_path):
     input: config_path 
     output: save train file in data/raw folder 
     """
-    config=read_params(config_path)
-    external_data_path=config["external_data_config"]["external_data_csv"]
-    raw_data_path=config["raw_data_config"]["raw_data_csv"]
-    model_var=config["raw_data_config"]["model_var"]
-    
-    df=load_data(external_data_path,model_var)
-    df.to_csv(raw_data_path,index=False)
-    
+    config = read_params(config_path)
+    external_data_ok_path = config["external_data_config"]["external_casting_ok_data_csv"]
+    external_data_def_path = config["external_data_config"]["external_casting_def_data_csv"]
+    raw_data_path = config["raw_data_config"]["raw_data"]
+    copy_raw_to_processed(external_data_ok_path, raw_data_path + "/ok_front")
+    copy_raw_to_processed(external_data_def_path, raw_data_path + "/def_front")
+
+
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
     args.add_argument("--config", default="params.yaml")

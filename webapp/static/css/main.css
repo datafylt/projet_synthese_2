@@ -1,3 +1,29 @@
 body {
     background-color: #eff8ff;
 }
+
+#imagePreviews {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adjust the space between images */
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+}
+
+#imagePreviews img {
+    max-width: calc(50% - 10px); /* Adjust width for 2 images per row, considering the gap */
+    height: auto;
+}
+
+.top-text {
+    text-align: center;
+    margin-top: 50px; /* Adjust as needed based on the size of your navbar */
+    padding: 10px;
+}
+
+.welcome-text h1 {
+    text-align: center;
+}
+.welcome-text p {
+    text-align: justify;
+}

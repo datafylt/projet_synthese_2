@@ -1,0 +1,6 @@
+outs:
+- md5: 5af3cfe3b63b21d308deebe02f21d65e.dir
+  size: 29466337
+  nfiles: 3037
+  hash: md5
+  path: ok_front

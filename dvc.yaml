@@ -3,36 +3,36 @@ stages:
     cmd: python src/data/load_data.py --config=params.yaml
     deps:
     - src/data/load_data.py
-    - data/external/train.csv
+    - data/external/casting_data
     outs:
-    - data/raw/train.csv
-  
+    - data/raw/casting_data
+
   split_data:
     cmd: python src/data/split_data.py --config=params.yaml
     deps:
     - src/data/split_data.py
-    - data/raw/train.csv
+    - data/raw/casting_data
     outs:
-    - data/processed/churn_train.csv
-    - data/processed/churn_test.csv
+    - data/processed/casting_data/test
+    - data/processed/casting_data/train
 
   model_train:
     cmd: python src/models/train_model.py --config=params.yaml
     deps:
-    - data/processed/churn_train.csv
-    - data/processed/churn_test.csv
+    - data/processed/casting_data/test
+    - data/processed/casting_data/train
     - src/models/train_model.py
     params:
     - random_forest.max_depth
     - random_forest.n_estimators
 
-  log_production_model:
-    cmd: python src/models/production_model_selection.py --config=params.yaml
-    deps:
-    - src/models/production_model_selection.py
-    params:
-    - random_forest.max_depth
-    - random_forest.n_estimators
-    outs:
-    - models/model.joblib
+#  log_production_model:
+#    cmd: python src/models/production_model_selection.py --config=params.yaml
+#    deps:
+#    - src/models/production_model_selection.py
+#    params:
+#    - random_forest.max_depth
+#    - random_forest.n_estimators
+#    outs:
+#    - models/model.joblib
 

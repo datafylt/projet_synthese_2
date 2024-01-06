@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, jsonify
 import os
-import numpy as np
+
+import cv2
+import joblib
 import yaml
-import joblib 
+from flask import Flask, render_template, request
+from werkzeug.utils import secure_filename
+import uuid
 
 webapp_root = "webapp"
 params_path = "params.yaml"
@@ -10,60 +13,94 @@ params_path = "params.yaml"
 static_dir = os.path.join(webapp_root, "static")
 template_dir = os.path.join(webapp_root, "templates")
 
-app = Flask(__name__, static_folder=static_dir,template_folder=template_dir)
+app = Flask(__name__, static_folder=static_dir, template_folder=template_dir)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
 
 
-class  NotANumber(Exception):
-    def __init__(self, message="Values entered are not Numerical"):
-        self.message = message
-        super().__init__(self.message)
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def read_params(config_path):
     with open(config_path) as yaml_file:
         config = yaml.safe_load(yaml_file)
     return config
 
-def predict(data):
-    config = read_params(params_path)
-    model_dir_path = config["model_webapp_dir"]
-    model = joblib.load(model_dir_path)
-    prediction = model.predict(data).tolist()[0]
-    return prediction 
 
-def validate_input(dict_request):
-    for _, val in dict_request.items():
-        try:
-            val=float(val)
-        except Exception as e:
-            raise NotANumber
-    return True
+def predict_input_images(images, web_temp_path):
+    predictions = {}
+    model = joblib.load("webapp/model_webapp_dir/model.joblib")
+    image_shape = (300, 300, 1)  # 300 × 300、graysclaed (full-color : 3)
+    for i in range(len(images)):
+        img_pred = cv2.imread(web_temp_path + images[i], cv2.IMREAD_GRAYSCALE)
+        img_pred = img_pred / 255  # rescale
+        prediction = model.predict(img_pred.reshape(1, *image_shape))
 
-def form_response(dict_request):
-    try:
-        if validate_input(dict_request):
-            data = dict_request.values()
-            data = [list(map(float, data))]
-            response = predict(data)
-            return response
-    except NotANumber as e:
-        response =  str(e)
-        return response 
+        # Predicted Class : defect
+        if (prediction < 0.5):
+            predicted_label = "Defect"
+            prob = (1 - prediction.sum()) * 100
+        # Predicted Class : OK
+        else:
+            predicted_label = "Ok"
+            prob = prediction.sum() * 100
+        predictions[os.path.basename(images[i])] = {"prediction": [predicted_label, str("{:.2f}".format(prob))]}
+    return predictions
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        try:
-            if request.form:
-                dict_req = dict(request.form)
-                response = form_response(dict_req)
-                return render_template("index.html", response=response)
-        except Exception as e:
-            print(e)
-            error = {"error": "Something went wrong!! Try again later!"}
-            error = {"error": e}
-            return render_template("404.html", error=error)
-    else:
-        return render_template("index.html")
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # Check if the post request has the file part
+        if 'picture' not in request.files:
+            return render_template("index.html", response="No file part")
+
+        uploaded_files = request.files.getlist('picture')
+        if len(uploaded_files) == 0:
+            return render_template("index.html", response="No selected file")
+        images = []
+        auth_prediction = {}
+        temp_process_path = 'webapp/temp_process/'
+        map_unique_name = {}
+        for file in uploaded_files:
+            ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+            unique_filename = f"{uuid.uuid4()}.{ext}"
+            filename = secure_filename(file.filename)
+            map_unique_name[unique_filename] = filename
+            if file and allowed_file(file.filename):
+                tmp_img_path = os.path.join(temp_process_path, unique_filename)
+                file.save(tmp_img_path)
+                images.append(unique_filename)
+                auth_prediction[unique_filename] = True
+            elif file and not allowed_file(file.filename):
+                auth_prediction[unique_filename] = False
+
+        result = predict_input_images(images, temp_process_path)
+        # Delete file after prediction
+        # os.remove(tmp_img_path)
+        response_msg = ''
+        for unique_fname in auth_prediction:
+            if auth_prediction[unique_fname]:
+                prediction_label = result.get(unique_fname).get("prediction")[0]
+                prediction_val = result.get(unique_fname).get("prediction")[1]
+                msg =''
+                if prediction_label == "Ok":
+                    msg += ("The part file " + map_unique_name[unique_fname] +
+                            " is consider OK at " + prediction_val + "%")
+                else:
+                    msg += ("The part file (" + map_unique_name[unique_fname] +
+                            ") is consider Defect at " + prediction_val + "%")
+
+                response_msg += (msg +"\n")
+            else:
+                response_msg +=  map_unique_name[unique_fname] + " - This file is not an authorized file!"
+
+        return render_template("index.html", response=response_msg)
+
+    return render_template('index.html')
+
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)

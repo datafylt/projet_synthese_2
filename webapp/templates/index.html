@@ -1,21 +1,18 @@
 {% extends 'base.html' %}
 
 {% block title %}
-ChurnPrediction
-{% endblock title %}
-
+Gear Analysis
+{% endblock %}
 
 {% block custom_css %}
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-{% endblock custom_css %}
-
+{% endblock %}
 
 {% block body %}
 <!-- nav bar -->
-
 <nav class="navbar navbar-expand-lg navbar-light shadow fixed-top" style="background-color: #e3f2fd;">
-    <a class="navbar-brand" href="/">Churn Prediction Model</a>
+    <a class="navbar-brand" href="/">Industrial Image Detection</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -26,72 +23,66 @@ ChurnPrediction
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://github.com/shanakaChathu/churn_model">source code</a>
+                <a class="nav-link" href="https://github.com/datafylt/projet_synthese_2">source code</a>
             </li>
         </ul>
     </div>
 </nav>
-<div>
-    <!-- nav bar ends -->
-
-    <div class="container-fluid masthead">
-        <br>
-        <br>
-        <br>
-        <br>
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <form method="POST">
-                        <!-- Input block-->
+<div class="container mt-5 welcome-text">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>Welcome to the Gear Analysis Tool</h1>
+            <p>In the manufacturing industry, reducing processing errors in the manufacturing process is important for maximizing profits. In order to reduce processing errors, it is necessary to secure a budget for quality assurance, implement manual inspection work, and review the manufacturing process. Particularly, the inspection process is carried out by many companies, but there are problems such as uneven accuracy depending on inspection workers and increased labor costs.</p>
+        </div>
+    </div>
+</div>
+<!-- nav bar ends -->
+<div class="container-fluid masthead">
+    <br><br><br><br>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <form method="POST" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="translation">
+                            <label for="fileUpload">
                                 <blockquote class="blockquote">
-                                    <p class="mb-2">Enter the details as indicated:</p>
+                                    <p class="mb-2">Select file/s for prediction</p>
                                 </blockquote>
                             </label>
-                            <textarea class="form-control" name="number_vmail_messages" rows="1" 
-                                placeholder="number_vmail_messages"></textarea>
-                            <textarea class="form-control" name="total_day_calls" rows="1"
-                                placeholder="total_day_calls"></textarea>
-                            <textarea class="form-control" name="total_eve_minutes" rows="1"
-                                placeholder="total_eve_minutes"></textarea>
-                            <textarea class="form-control" name="total_eve_charge" rows="1"
-                                placeholder="total_eve_charge"></textarea>
-                            <textarea class="form-control" name="total_intl_minutes" rows="1"
-                                placeholder="total_intl_minutes"></textarea>
-                            <textarea class="form-control" name="number_customer_service_calls" rows="1"
-                                placeholder="number_customer_service_calls"></textarea>
-                        </div>
-
-                        <!-- Select output language here. -->
-                        <div class="form-group">
-                        </div>
-                        <button type="submit" class="btn btn-primary mb-2">Predict</button></br>
-                        </br>
-                    </form>
-                    <!-- Translated text returned by the Translate API is rendered here. -->
-                </div>
-                <div class="col">
-                    <form>
-                        <div class="form-group">
-                            <label for="translation-result">
-
-                                <blockquote class="blockquote">
-                                    <p class="mb-2">Prediction:</p>
-                                </blockquote>
-
-                            </label>
-                            <textarea readonly class="form-control" id="exTextarea" rows="5">{{ response }}</textarea>
+                             <div class="form-group d-flex align-items-center">
+                                <input type="file" class="form-control-file mr-2" name="picture" id="fileUpload" multiple onchange="previewImages();">
+                                <button type="submit" class="btn btn-primary mb-2">Predict</button>
+                            </div>
+                            <!-- Image previews -->
+                            <div class="form-group" id="imagePreviews">
+                                <!-- Image previews will be inserted here -->
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
+            <div class="col">
+                <form>
+                    <div class="form-group">
+                        <label for="translation-result">
+                            <blockquote class="blockquote">
+                                <p class="mb-2">Prediction:</p>
+                            </blockquote>
+                        </label>
+                        <textarea readonly class="form-control" id="exTextarea" rows="5">{{ response }}</textarea>
+                    </div>
+                </form>
+                <div class="additional-text">
+                    <p>This is some additional text below the form.</p>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
+{% endblock %}
 
-        {% endblock body %}
-
-        {% block custom_js %}
-        <!-- Custom JS -->
-        <script src="{{ url_for('static', filename='script/index.js') }}"></script>
-        {% endblock custom_js %}
+{% block custom_js %}
+<!-- Custom JS -->
+<script src="{{ url_for('static', filename='script/index.js') }}"></script>
+{% endblock %}

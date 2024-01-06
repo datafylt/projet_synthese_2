@@ -1,0 +1,6 @@
+outs:
+- md5: c9ac5dcfbb648409a9fc81a7ed1ca206.dir
+  size: 41420055
+  nfiles: 4166
+  hash: md5
+  path: def_front
