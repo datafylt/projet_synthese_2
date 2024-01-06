@@ -14,5 +14,5 @@ flask
 argparse
 shap
 tensorflow
-cv2
+opencv-python
 keras
