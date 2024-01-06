@@ -1,4 +1,6 @@
 import os
+import shutil
+import time
 
 import cv2
 import joblib
@@ -36,7 +38,15 @@ def predict_input_images(images, web_temp_path):
     for i in range(len(images)):
         img_pred = cv2.imread(web_temp_path + images[i], cv2.IMREAD_GRAYSCALE)
         img_pred = img_pred / 255  # rescale
+
+        # Start the timer
+        start_time = time.time()
         prediction = model.predict(img_pred.reshape(1, *image_shape))
+        # End the timer
+        end_time = time.time()
+
+        # Calculate elapsed time
+        elapsed_time = end_time - start_time
 
         # Predicted Class : defect
         if (prediction < 0.5):
@@ -46,7 +56,7 @@ def predict_input_images(images, web_temp_path):
         else:
             predicted_label = "Ok"
             prob = prediction.sum() * 100
-        predictions[os.path.basename(images[i])] = {"prediction": [predicted_label, str("{:.2f}".format(prob))]}
+        predictions[os.path.basename(images[i])] = {"prediction": [predicted_label, str("{:.2f}".format(prob)) + "%, process time: " +  str("{:.3f}".format(elapsed_time))]}
     return predictions
 
 
@@ -81,21 +91,29 @@ def upload_file():
         # Delete file after prediction
         # os.remove(tmp_img_path)
         response_msg = ''
+        predicted_path = 'webapp/predicted_images/'
         for unique_fname in auth_prediction:
             if auth_prediction[unique_fname]:
+                real_fname = map_unique_name[unique_fname]
                 prediction_label = result.get(unique_fname).get("prediction")[0]
                 prediction_val = result.get(unique_fname).get("prediction")[1]
                 msg =''
+                tmp_img_source_path = temp_process_path + unique_fname
                 if prediction_label == "Ok":
-                    msg += ("The part file " + map_unique_name[unique_fname] +
-                            " is consider OK at " + prediction_val + "%")
+                    img_destination_path = predicted_path + "ok_front/" + real_fname + "_" + unique_fname
+                    msg += ("The part file " + real_fname +
+                            " is consider OK at " + prediction_val)
                 else:
-                    msg += ("The part file (" + map_unique_name[unique_fname] +
-                            ") is consider Defect at " + prediction_val + "%")
+                    img_destination_path = predicted_path + "def_front/" + real_fname + "_" + unique_fname
+                    msg += ("The part file (" + real_fname +
+                            ") is consider Defect at " + prediction_val)
 
+                shutil.copy(tmp_img_source_path, img_destination_path)
+                # Delete file from temp process file after prediction
+                os.remove(temp_process_path + unique_fname)
                 response_msg += (msg +"\n")
             else:
-                response_msg +=  map_unique_name[unique_fname] + " - This file is not an authorized file!"
+                response_msg +=  real_fname + " - This file is not an authorized file!"
 
         return render_template("index.html", response=response_msg)
 

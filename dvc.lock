@@ -5,7 +5,7 @@ stages:
     deps:
     - path: data/external/casting_data
       hash: md5
-      md5: b5e9e54d463701fd569048cf429017b0.dir
+      md5: 55023943fe6c218dc0496e43ecd36620.dir
       size: 70895779
       nfiles: 7207
     - path: src/data/load_data.py
@@ -15,17 +15,17 @@ stages:
     outs:
     - path: data/raw/casting_data
       hash: md5
-      md5: 09fb2fe98b32bb59d1ee3d94c724f501.dir
-      size: 70886392
-      nfiles: 7203
+      md5: 1cfacc65ea95676f1bc3b5d7bfcf2efa.dir
+      size: 70895521
+      nfiles: 7204
   split_data:
     cmd: python src/data/split_data.py --config=params.yaml
     deps:
     - path: data/raw/casting_data
       hash: md5
-      md5: 09fb2fe98b32bb59d1ee3d94c724f501.dir
-      size: 70886392
-      nfiles: 7203
+      md5: 1cfacc65ea95676f1bc3b5d7bfcf2efa.dir
+      size: 70895521
+      nfiles: 7204
     - path: src/data/split_data.py
       hash: md5
       md5: b27acd150be7df20aed33c16c0991502
@@ -33,27 +33,27 @@ stages:
     outs:
     - path: data/processed/casting_data/test
       hash: md5
-      md5: 1bca74b2ec826bcdb1819c1e6721d10b.dir
-      size: 7104936
+      md5: 33e465f68482936d51f4bf61b5e8ce3a.dir
+      size: 7063621
       nfiles: 719
     - path: data/processed/casting_data/train
       hash: md5
-      md5: d8b979216c62e52baf1f282b47ad94cc.dir
-      size: 63781456
-      nfiles: 6484
+      md5: 4ce0d7c64db77985fee29062c264caa8.dir
+      size: 63831900
+      nfiles: 6485
   model_train:
     cmd: python src/models/train_model.py --config=params.yaml
     deps:
     - path: data/processed/casting_data/test
       hash: md5
-      md5: 1bca74b2ec826bcdb1819c1e6721d10b.dir
-      size: 7104936
+      md5: 33e465f68482936d51f4bf61b5e8ce3a.dir
+      size: 7063621
       nfiles: 719
     - path: data/processed/casting_data/train
       hash: md5
-      md5: d8b979216c62e52baf1f282b47ad94cc.dir
-      size: 63781456
-      nfiles: 6484
+      md5: 4ce0d7c64db77985fee29062c264caa8.dir
+      size: 63831900
+      nfiles: 6485
     - path: src/models/train_model.py
       hash: md5
       md5: c942a1606d903a2643d886a4572fd98e
