@@ -109,7 +109,7 @@ def upload_file():
                             ") is consider Defect at " + prediction_val)
 
                 shutil.copy(tmp_img_source_path, img_destination_path)
-                # Delete file from temp process file after prediction
+                # Delete file from temp process file after prediction....
                 os.remove(temp_process_path + unique_fname)
                 response_msg += (msg +"\n")
             else:
