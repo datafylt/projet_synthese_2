@@ -1,23 +1,17 @@
-import json
+import argparse
 import os
 import warnings
+from urllib.parse import urlparse
 
-import yaml
 import joblib
 import mlflow
-import argparse
-from urllib.parse import urlparse
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import f1_score, recall_score, accuracy_score, precision_score, confusion_matrix, \
-    classification_report
-
-import cv2
+import yaml
+from sklearn.metrics import f1_score, recall_score, accuracy_score, precision_score
 
 warnings.filterwarnings('ignore')
 import holoviews as hv
 
 hv.extension('bokeh')
-import json
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
