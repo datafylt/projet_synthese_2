@@ -9,9 +9,6 @@ import yaml
 from sklearn.metrics import f1_score, recall_score, accuracy_score, precision_score
 
 warnings.filterwarnings('ignore')
-import holoviews as hv
-
-hv.extension('bokeh')
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential

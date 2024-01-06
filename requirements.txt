@@ -14,10 +14,8 @@ flask
 argparse
 shap
 tensorflow
-holoviews
 json
 seaborn
 os
-operator
 cv2
 keras
