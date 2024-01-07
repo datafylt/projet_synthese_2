@@ -1,3 +1,12 @@
 tests/
 docs/
 *.md
+*.ipynb
+.env
+.env.example
+venv/
+__pycache__/
+*.pyc
+node_modules/
+*.log
+*.hdf5
