@@ -13,3 +13,5 @@ joblib
 flask
 argparse
 shap
+opencv-python
+
