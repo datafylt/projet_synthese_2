@@ -13,6 +13,3 @@ joblib
 flask
 argparse
 shap
-tensorflow
-opencv-python
-keras
