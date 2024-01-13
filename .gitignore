@@ -89,4 +89,6 @@ target/
 .mypy_cache/
 artifacts/
 #webapp/
-#models/model.joblib
+/models/model.joblib
+/webapp/predicted_images/ok_front/*.jpeg
+/webapp/predicted_images/def_front/*.jpeg

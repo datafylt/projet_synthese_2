@@ -13,6 +13,6 @@ joblib
 flask
 argparse
 shap
-tensorflow
+tensorflow-cpu
 opencv-python
 keras
