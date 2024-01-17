@@ -7,6 +7,9 @@ Gear Analysis
 {% block custom_css %}
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<!-- PhotoSwipe CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/default-skin/default-skin.min.css">
 {% endblock %}
 
 {% block body %}
@@ -14,7 +17,7 @@ Gear Analysis
 <nav class="navbar navbar-expand-lg navbar-light shadow fixed-top" style="background-color: #e3f2fd;">
     <a class="navbar-brand" href="/">Industrial Image Detection</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -23,66 +26,164 @@ Gear Analysis
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="/prediction">Prediction</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/analysis">Analysis</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="https://github.com/datafylt/projet_synthese_2">source code</a>
             </li>
         </ul>
     </div>
 </nav>
-<div class="container mt-5 welcome-text">
-    <div class="row">
-        <div class="col-lg-12">
-            <h1>Welcome to the Gear Analysis Tool</h1>
-            <p>In the manufacturing industry, reducing processing errors in the manufacturing process is important for maximizing profits. In order to reduce processing errors, it is necessary to secure a budget for quality assurance, implement manual inspection work, and review the manufacturing process. Particularly, the inspection process is carried out by many companies, but there are problems such as uneven accuracy depending on inspection workers and increased labor costs.</p>
-        </div>
-    </div>
-</div>
-<!-- nav bar ends -->
-<div class="container-fluid masthead">
-    <br><br><br><br>
-    <div class="container">
-        <div class="row">
-            <div class="col-5">
-                <div class="row">
-                    <form method="POST" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="fileUpload">
-                                <blockquote class="blockquote">
-                                    <p class="mb-2">Select file/s for prediction</p>
-                                </blockquote>
-                            </label>
-                             <div class="form-group d-flex align-items-center">
-                                <input type="file" class="form-control-file mr-2" name="picture" id="fileUpload" multiple onchange="previewImages();">
-                                <button type="submit" class="btn btn-primary mb-2">Predict</button>
-                            </div>
-                            <!-- Image previews -->
-                            <div class="form-group" id="imagePreviews">
-                                <!-- Image previews will be inserted here -->
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-7">
-                <form>
-                    <div class="form-group">
-                        <label for="translation-result">
-                            <blockquote class="blockquote">
-                                <p class="mb-2">Prediction:</p>
-                            </blockquote>
-                        </label>
-                        <textarea readonly class="form-control" id="exTextarea" rows="5">{{ response }}</textarea>
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="margin-top: 30px;">
+    <div class="carousel-inner" style="margin-top: 80px;">
+        <!-- First item (active) -->
+        <div class="carousel-item active">
+            <div class="container">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-md-6">
+                        <!-- Text Content -->
+                        <p>Your text goes here...</p>
                     </div>
-                </form>
-                <div class="additional-text">
-                    <p>This is some additional text below the form....</p>
+                    <div class="col-md-4">
+                        <!-- Image Content -->
+                        <img src="{{ url_for('static', filename='images/test1.jpeg') }}" alt="Image Description"
+                             style="max-width: 200px;">
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Second item -->
+        <div class="carousel-item">
+            <div class="container">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-md-6">
+                        <!-- Text Content -->
+                        <p>Your text goes here...</p>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Image Content -->
+                        <img src="{{ url_for('static', filename='images/dvc.jpg') }}" alt="Image Description"
+                             style="max-width: 200px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Second item -->
+        <div class="carousel-item">
+            <div class="container">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-md-6">
+                        <!-- Text Content -->
+                        <p>Your text goes here...</p>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Image Content -->
+                        <img src="{{ url_for('static', filename='images/dvc.jpg') }}" alt="Image Description"
+                             style="max-width: 200px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Repeat for other carousel items, following the same pattern -->
+    </div>
+
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="sr-only">Previous</span>
+        <span style="color: black; font-size: 20px;">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="sr-only">Next</span>
+        <span style="color: black; font-size: 20px;">Next</span>
+    </a>
+
+
+</div>
+
+
+<div class="container mt-5">
+    <!-- Row for Sections 2 and 3 -->
+    <div class="row">
+        <!-- Section 2 -->
+        <div class="col-md-6">
+            <h2>Section 2 Title</h2>
+            <p>In the manufacturing industry, reducing processing errors in the manufacturing process is important for
+                maximizing profits. In order to reduce processing errors, it is necessary to secure a budget for quality
+                assurance, implement manual inspection work, and review the manufacturing process. Particularly, the
+                inspection process is carried out by many companies, but there are problems such as uneven accuracy
+                depending on inspection workers and increased labor costs.</p>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="col-md-6">
+            <h2>Section 3 Title</h2>
+            <p>In the manufacturing industry, reducing processing errors in the manufacturing process is important for
+                maximizing profits. In order to reduce processing errors, it is necessary to secure a budget for quality
+                assurance, implement manual inspection work, and review the manufacturing process. Particularly, the
+                inspection process is carried out by many companies, but there are problems such as uneven accuracy
+                depending on inspection workers and increased labor costs.</p>
+        </div>
     </div>
 </div>
-{% endblock %}
 
-{% block custom_js %}
-<!-- Custom JS -->
-<script src="{{ url_for('static', filename='script/index.js') }}"></script>
+<!-- Logos Section -->
+<div class="container mt-3">
+    <div class="row">
+        <!-- Logo 1 -->
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/dvc.jpg') }}" alt="Logo 1" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/flask.png') }}" alt="Logo 2" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/gitbash.png') }}" alt="Logo 3" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/github.png') }}" alt="Logo 4" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/google cloud.png') }}" alt="Logo 5" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/google drive.png') }}" alt="Logo 6" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/heroku.png') }}" alt="Logo 7" class="img-fluid">
+        </div>
+        <!-- Repeat for each logo -->
+        <!-- ... -->
+    </div>
+    <div class="row">
+        <!-- Second row of logos -->
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/jira.png') }}" alt="Logo 1" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/jupyter.png') }}" alt="Logo 2" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/mflow.png') }}" alt="Logo 3" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/pycharm.jpg') }}" alt="Logo 4" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/render.JPG') }}" alt="Logo 5" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/sourcetree.png') }}" alt="Logo 6" class="img-fluid">
+        </div>
+        <div class="col text-center logo-container">
+            <img src="{{ url_for('static', filename='images/vscode.jpg') }}" alt="Logo 7" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- nav bar ends -->
+
+
 {% endblock %}

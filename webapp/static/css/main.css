@@ -1,5 +1,5 @@
 body {
-    background-color: #eff8ff;
+    background-color: #ffffff;
 }
 
 #imagePreviews {
@@ -23,7 +23,104 @@ body {
 
 .welcome-text h1 {
     text-align: center;
+    margin-top: 10px;
 }
 .welcome-text p {
     text-align: justify;
+}
+
+.scrollable-box {
+    height: 500px; /* Adjust the height as necessary */
+    overflow-y: auto;
+}
+.image-container {
+    padding: 15px;
+}
+img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 15px
+}
+
+.scrollable-gallery {
+    height: 500px; /* Adjust the height as needed */
+    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Adjust the gap as needed */
+    padding: 10px;
+}
+
+.gallery-item {
+    flex: 0 0 auto; /* Do not grow or shrink */
+}
+.lazy-load {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.lazy-load[loaded] {
+    opacity: 1;
+}
+.scrollable-grid-container {
+    height: 500px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.image-predictions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.image-prediction {
+    border: 2px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.grid-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.pswp__img {
+    width: 50% !important;
+    height: auto !important; /* to maintain the aspect ratio */
+}
+
+.logo-container {
+    height: 120px; /* Increased height to account for padding */
+    width: 120px; /* Width to keep the box square, adjust as needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*border: 1px solid #ddd; !* Border as per your requirement *!*/
+    padding: 10px; /* Padding inside the box */
+    margin: 5px; /* Margin outside the box to separate them */
+    box-sizing: border-box;
+}
+
+.logo-container img {
+    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Maximum width of image */
+    max-height: 100%; /* Maximum height of image */
+}
+
+.carousel-item .d-flex {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.text-container {
+    flex: 1;
+    padding-right: 20px; /* Adjust padding as needed */
+}
+
+.image-container {
+    flex: 0 0 200px; /* Fixed width for image container */
 }
