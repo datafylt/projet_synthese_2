@@ -3,25 +3,28 @@ on: [push]
 
 jobs:
   build:
-    runs-on: [ ubuntu-20.04 ]
+    runs-on: ubuntu-20.04
     container: docker://dvcorg/cml:latest
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: cml_run
-      env:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: '3.9'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        pip install 'dvc[gdrive]' # This line is added to install dvc with gdrive support
+        pip install 'dvc[gdrive]'  # This line ensures dvc-gdrive is installed
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Prepare GDrive Service Account credentials
+      env:
+        GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.4ddffea706115bd7b683ee33d0273f27c70f06a6  }}
+      run: |
+        echo "$GDRIVE_SERVICE_ACCOUNT_KEY" > $HOME/creds.json
+        echo "export GOOGLE_APPLICATION_CREDENTIALS=$HOME/creds.json" >> $GITHUB_ENV
     - name: DVC Pipeline
       run: |
         dvc pull
@@ -33,10 +36,10 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Deploy to Heroku
+      if: github.ref == 'refs/heads/main' && job.status == 'success'
+      run: |
+        git remote add heroku https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+        git push heroku HEAD:main -f
       env:
         HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
         HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-      if: github.ref == 'refs/heads/main' && job.status == 'success'
-      run: |
-        git remote add heroku https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git
-        git push heroku HEAD:main -f
