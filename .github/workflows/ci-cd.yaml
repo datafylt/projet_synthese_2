@@ -19,9 +19,9 @@ jobs:
         pip install flake8 pytest
         pip install 'dvc[gdrive]'  # This line ensures dvc-gdrive is installed
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Prepare GDrive Service Account credentials
+    - name: Prepare GDrive
       env:
-        GDRIVE_SERVICE_ACCOUNT_KEY: ${{ secrets.4ddffea706115bd7b683ee33d0273f27c70f06a6  }}
+        REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "$GDRIVE_SERVICE_ACCOUNT_KEY" > $HOME/creds.json
         echo "export GOOGLE_APPLICATION_CREDENTIALS=$HOME/creds.json" >> $GITHUB_ENV
