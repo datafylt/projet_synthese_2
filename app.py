@@ -157,9 +157,10 @@ def upload_file():
                 flash(f"File {file.filename} is not an authorized file!", category='error')
 
         session['image_predictions'] = image_predictions
+        print("Goto Results page.....")
         return redirect(url_for('results'))
     else:
-        print("going to index")
+        print("Into Prediction page.....")
         return render_template('prediction.html')
 
 
@@ -169,6 +170,7 @@ def results():
     image_predictions = session.get('image_predictions', [])
     # Clear the session for image predictions
     session.pop('image_predictions', None)
+    print("Into Result page.....")
     return render_template('prediction.html', predictions=image_predictions)
 
 

@@ -20,6 +20,7 @@ mlflow_config:
   run_name: random_forest
   registered_model_name: random_forest_model
   remote_server_uri: http://localhost:1234
+  is_remote: True
  
 random_forest: 
   max_depth: 10
