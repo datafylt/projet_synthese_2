@@ -1,26 +1,10 @@
 name: Test Workflow
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-    inputs:
-      my_boolean_var:
-        description: 'Set the boolean variable'
-        required: true
-        default: 'true'  # Default value set to 'true'
+on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Check boolean value
-        run: |
-          echo "The boolean variable is ${{ github.event.inputs.my_boolean_var }}"
-      - name: Echo Workflow Running
-        run: |
-          echo "Workflow running!"
-
-
+      - run: echo "Workflow running!"
 
 #name: Gear Analysis
 #on: [push]
