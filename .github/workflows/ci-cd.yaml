@@ -1,5 +1,14 @@
 name: Gear Analysis
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      is_remote:
+        description: 'Run as remote'
+        required: false
+        default: 'true'  # Default value set to 'true', can be 'true' or 'false'
 
 jobs:
   build:
@@ -27,7 +36,7 @@ jobs:
         dvc repro
       env:
         GDRIVE_CREDENTIALS_DATA: '${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}'
-        IS_REMOTE: true
+        IS_REMOTE: ${{ github.event.inputs.is_remote }}
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
