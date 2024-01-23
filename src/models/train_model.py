@@ -118,41 +118,44 @@ def train_and_evaluate(config_path):
                                              seed=0)
 
     target = config["raw_data_config"]["target"]
-
+    model = generate_model(train_set, test_set, image_shape)
     ################### MLFLOW ##############################
+
     mlflow_config = config["mlflow_config"]
     remote_server_uri = mlflow_config["remote_server_uri"]
 
     mlflow.set_tracking_uri(remote_server_uri)
     mlflow.set_experiment(mlflow_config["experiment_name"])
 
-    with mlflow.start_run(run_name=mlflow_config["run_name"]) as mlops_run:
-        model = generate_model(train_set, test_set, image_shape)
-        y_pred = model.predict_generator(test_set)
-        y_pred = [1 if y > 0.5 else 0 for y in y_pred]  # Converting probabilities to class labels
-        test_y = test_set.classes
+    is_remote = os.environ['IS_REMOTE'] if 'IS_REMOTE' in os.environ else False
 
-        accuracy, precision, recall, f1score = accuracymeasures(test_y, y_pred, 'weighted')
+    if not is_remote:
+        with mlflow.start_run(run_name=mlflow_config["run_name"]) as mlops_run:
+            y_pred = model.predict_generator(test_set)
+            y_pred = [1 if y > 0.5 else 0 for y in y_pred]  # Converting probabilities to class labels
+            test_y = test_set.classes
 
-        mlflow.log_metric("accuracy", accuracy)
-        mlflow.log_metric("precision", precision)
-        mlflow.log_metric("recall", recall)
-        mlflow.log_metric("f1_score", f1score)
+            accuracy, precision, recall, f1score = accuracymeasures(test_y, y_pred, 'weighted')
 
-        tracking_url_type_store = urlparse(mlflow.get_artifact_uri()).scheme
+            mlflow.log_metric("accuracy", accuracy)
+            mlflow.log_metric("precision", precision)
+            mlflow.log_metric("recall", recall)
+            mlflow.log_metric("f1_score", f1score)
 
-        if tracking_url_type_store != "file":
-            mlflow.sklearn.log_model(
-                model,
-                "model",
-                registered_model_name=mlflow_config["registered_model_name"])
-        else:
-            # Log the model to the local directory...
-            mlflow.sklearn.log_model(model, "model")
-            # Get the URI of the model artifact
-            model_uri = os.path.join(mlflow.get_artifact_uri(), "model")
-            # Load the model from the local directory
-            mlflow.sklearn.load_model(model_uri=model_uri)
+            tracking_url_type_store = urlparse(mlflow.get_artifact_uri()).scheme
+
+            if tracking_url_type_store != "file":
+                mlflow.sklearn.log_model(
+                    model,
+                    "model",
+                    registered_model_name=mlflow_config["registered_model_name"])
+            else:
+                # Log the model to the local directory...
+                mlflow.sklearn.log_model(model, "model")
+                # Get the URI of the model artifact
+                model_uri = os.path.join(mlflow.get_artifact_uri(), "model")
+                # Load the model from the local directory
+                mlflow.sklearn.load_model(model_uri=model_uri)
 
         joblib.dump(model, model_dir)
         joblib.dump(model, web_model_dir)
@@ -163,3 +166,4 @@ if __name__ == "__main__":
     args.add_argument("--config", default="params.yaml")
     parsed_args = args.parse_args()
     train_and_evaluate(config_path=parsed_args.config)
+    # test
