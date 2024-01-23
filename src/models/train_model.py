@@ -128,8 +128,7 @@ def train_and_evaluate(config_path):
     mlflow.set_experiment(mlflow_config["experiment_name"])
 
     is_remote = os.environ['IS_REMOTE'] if 'IS_REMOTE' in os.environ else False
-
-    if not is_remote:
+    if is_remote != 'true':
         with mlflow.start_run(run_name=mlflow_config["run_name"]) as mlops_run:
             y_pred = model.predict_generator(test_set)
             y_pred = [1 if y > 0.5 else 0 for y in y_pred]  # Converting probabilities to class labels

@@ -1,52 +1,44 @@
-name: Test Workflow
+name: Gear Analysis
 on: [push]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Workflow running!"
 
-#name: Gear Analysis
-#on: [push]
-#
-#jobs:
-#  build:
-#    runs-on: ubuntu-20.04
-#    container: docker://dvcorg/cml:latest
-#    steps:
-#    - uses: actions/checkout@v2
-#      with:
-#        fetch-depth: 0
-#    - name: Set up Python 3.9
-#      uses: actions/setup-python@v2
-#      with:
-#        python-version: '3.9'
-#    - name: Install dependencies
-#      run: |
-#        python -m pip install --upgrade pip
-#        pip install flake8 pytest
-#        pip install dvc
-#        pip install dvc-gdrive
-#        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-#    - name: DVC Pipeline
-#      run: |
-#        dvc remote modify gdrive gdrive_use_service_account true
-#        dvc pull
-#        dvc repro
-#      env:
-#        GDRIVE_CREDENTIALS_DATA: '${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}'
-#        IS_REMOTE: true
-#    - name: Lint with flake8
-#      run: |
-#        # stop the build if there are Python syntax errors or undefined names
-#        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-#        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-#        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-#    - name: Deploy to Heroku
-#      if: github.ref == 'refs/heads/main' && job.status == 'success'
-#      run: |
-#        git remote add heroku https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
-#        git push heroku HEAD:main -f
-#      env:
-#        HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
-#        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    container: docker://dvcorg/cml:latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        pip install dvc
+        pip install dvc-gdrive
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: DVC Pipeline
+      run: |
+        dvc remote modify gdrive gdrive_use_service_account true
+        dvc pull
+        dvc repro
+      env:
+        GDRIVE_CREDENTIALS_DATA: '${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}'
+        IS_REMOTE: 'true'
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Deploy to Heroku
+      if: github.ref == 'refs/heads/main' && job.status == 'success'
+      run: |
+        git remote add heroku https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+        git push heroku HEAD:main -f
+      env:
+        HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+        HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
