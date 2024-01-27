@@ -122,6 +122,7 @@ def train_and_evaluate(config_path):
     # model = generate_model(train_set, test_set, image_shape)
 
     is_local = os.environ['IS_REMOTE'] if 'IS_REMOTE' in os.environ else True
+    is_local = False
 
     if is_local:
         ################### MLFLOW ############################
