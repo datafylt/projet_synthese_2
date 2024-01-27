@@ -119,18 +119,18 @@ def train_and_evaluate(config_path):
 
     target = config["raw_data_config"]["target"]
 
-    ################### MLFLOW ############################
-
-    mlflow_config = config["mlflow_config"]
-    remote_server_uri = mlflow_config["remote_server_uri"]
-
-    mlflow.set_tracking_uri(remote_server_uri)
-    mlflow.set_experiment(mlflow_config["experiment_name"])
     # model = generate_model(train_set, test_set, image_shape)
 
     is_local = os.environ['IS_REMOTE'] if 'IS_REMOTE' in os.environ else True
 
     if is_local:
+        ################### MLFLOW ############################
+        mlflow_config = config["mlflow_config"]
+        remote_server_uri = mlflow_config["remote_server_uri"]
+
+        mlflow.set_tracking_uri(remote_server_uri)
+        mlflow.set_experiment(mlflow_config["experiment_name"])
+
         print("we are in local")
         with mlflow.start_run(run_name=mlflow_config["run_name"]) as mlops_run:
             model = generate_model(train_set, test_set, image_shape)
