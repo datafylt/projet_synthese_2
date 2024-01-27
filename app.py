@@ -63,13 +63,14 @@ def predict_input_images(images, web_temp_path):
     return predictions
 
 
-def saved_predicted_image(save_folder):
+def saved_predicted_image(save_folder, predicted_source):
     # Ensure the request is JSON
     if not request.is_json:
         return jsonify({"error": "Missing JSON in request"}), 400
 
     # Get the list of images from the request
     image_urls = request.json.get('images', [])
+    print(image_urls)
     # Define the folder where you want to save images
 
     for image_url in image_urls:
@@ -81,14 +82,13 @@ def saved_predicted_image(save_folder):
         static_image_path = os.path.join('', image_url.strip('/').replace('/', os.sep))
         # Copy the file to the new location
         shutil.copy(static_image_path, save_path)
+    delete_images(predicted_source, image_urls)
 
 
-def delete_predicted_image(delete_path):
-    data = request.get_json()
-    defect_images = data.get('defect_images', [])
+def delete_images(delete_path, analysis_images):
     errors = []
 
-    for image_url in defect_images:
+    for image_url in analysis_images:
         filename = os.path.basename(image_url)
         file_path = os.path.join(delete_path, filename)
 
@@ -102,6 +102,8 @@ def delete_predicted_image(delete_path):
 
     if errors:
         return jsonify({"error": "Some images could not be deleted", "details": errors}), 400
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home_page():
     print("going to index")
@@ -174,7 +176,6 @@ def results():
     return render_template('prediction.html', predictions=image_predictions)
 
 
-
 @app.route('/analysis')
 def analysis():
     # Define allowed image extensions
@@ -211,31 +212,37 @@ def def_front_images(filename):
 @app.route('/save_ok_images', methods=['POST'])
 def save_ok_images():
     save_folder = 'webapp/temp_process/for_new_model/ok_front'
-    saved_predicted_image(save_folder)
-    return jsonify({"success": "OK Images saved"}), 200
+    predicted_ok_source = 'webapp/predicted_images/ok_front'
+    saved_predicted_image(save_folder, predicted_ok_source)
+    return redirect(url_for('analysis'))
+    # return jsonify({"success": "OK Images saved"}), 200
 
 
 @app.route('/save_defect_images', methods=['POST'])
 def save_defect_images():
-    save_folder = 'webapp/temp_process/for_new_model/ok_front'
-    saved_predicted_image(save_folder)
+    save_folder = 'webapp/temp_process/for_new_model/def_front'
+    predicted_def_source = 'webapp/predicted_images/def_front'
+    saved_predicted_image(save_folder, predicted_def_source)
     return jsonify({"success": "Defect Images saved"}), 200
 
 
 @app.route('/delete_defect_images', methods=['POST'])
 def delete_defect_images():
+    data = request.get_json()
+    defect_images = data.get('defect_images', [])
     del_def_path = 'webapp/predicted_images/def_front'
-    delete_predicted_image(del_def_path)
+    delete_images(del_def_path, defect_images)
     return jsonify({"success": "Selected defect images deleted"}), 200
 
 
 @app.route('/delete_ok_images', methods=['POST'])
 def delete_ok_images():
+    data = request.get_json()
+    ok_images = data.get('ok_images', [])
     del_ok_path = 'webapp/predicted_images/ok_front'
-    delete_predicted_image(del_ok_path)
+    delete_images(del_ok_path, ok_images)
     return jsonify({"success": "Selected defect images deleted"}), 200
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
-

@@ -17,10 +17,10 @@ processed_data_config:
 mlflow_config:
   artifacts_dir: artifacts
   experiment_name: model_iteration1
-  run_name: random_forest
-  registered_model_name: random_forest_model
+  run_name: neural_network
+  registered_model_name: Neural Network
   remote_server_uri: http://localhost:1234
-  is_remote: True
+
  
 random_forest: 
   max_depth: 10

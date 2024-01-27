@@ -119,16 +119,19 @@ def train_and_evaluate(config_path):
 
     target = config["raw_data_config"]["target"]
 
-    ################### MLFLOW ##############################
+    ################### MLFLOW ############################
 
     mlflow_config = config["mlflow_config"]
     remote_server_uri = mlflow_config["remote_server_uri"]
 
     mlflow.set_tracking_uri(remote_server_uri)
     mlflow.set_experiment(mlflow_config["experiment_name"])
+    # model = generate_model(train_set, test_set, image_shape)
 
-    is_remote = mlflow_config["is_remote"]
-    if not is_remote:
+    is_local = os.environ['IS_REMOTE'] if 'IS_REMOTE' in os.environ else True
+
+    if is_local:
+        print("we are in local")
         with mlflow.start_run(run_name=mlflow_config["run_name"]) as mlops_run:
             model = generate_model(train_set, test_set, image_shape)
             y_pred = model.predict_generator(test_set)
@@ -157,8 +160,8 @@ def train_and_evaluate(config_path):
                 # Load the model from the local directory
                 mlflow.sklearn.load_model(model_uri=model_uri)
 
-        joblib.dump(model, model_dir)
-        joblib.dump(model, web_model_dir)
+    # joblib.dump(model, model_dir)
+    # joblib.dump(model, web_model_dir)
 
 
 if __name__ == "__main__":

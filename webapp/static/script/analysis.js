@@ -103,8 +103,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Depending on the selected type, call the delete function
             if (selectedImagesType === 'ok_images') {
+                console.log("inside ok delete...")
                 deleteImages('ok_images', '/delete_ok_images');
             } else if (selectedImagesType === 'defect_images') {
+                console.log("inside def delete...")
                 deleteImages('defect_images', '/delete_defect_images');
             }
         });
