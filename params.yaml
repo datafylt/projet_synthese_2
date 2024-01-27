@@ -20,7 +20,6 @@ mlflow_config:
   run_name: neural_network
   registered_model_name: Neural Network
   remote_server_uri: http://localhost:1234
-  is_remote: False
  
 random_forest: 
   max_depth: 10
