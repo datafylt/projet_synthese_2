@@ -40,17 +40,14 @@ Gear Analysis
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="margin-top: 30px;">
     <div class="carousel-inner" style="margin-top: 80px;">
         <!-- First item (active) -->
+        <!-- First item (active) -->
         <div class="carousel-item active">
-            <div class="container">
-                <div class="row justify-content-center align-items-center">
-                    <div class="col-md-6">
-                        <!-- Text Content -->
-                        <p>Your text goes here...</p>
-                    </div>
-                    <div class="col-md-4">
+            <div class="container d-flex h-100">
+                <div class="row justify-content-center align-items-center w-100">
+                    <div class="col-md">
                         <!-- Image Content -->
-                        <img src="{{ url_for('static', filename='images/test1.jpeg') }}" alt="Image Description"
-                             style="max-width: 200px;">
+                        <img src="{{ url_for('static', filename='images/slide1.png') }}" alt="Image Description"
+                             style="max-width: 50%; margin: 0 auto; display: block;">
                     </div>
                 </div>
             </div>
@@ -60,14 +57,9 @@ Gear Analysis
         <div class="carousel-item">
             <div class="container">
                 <div class="row justify-content-center align-items-center">
-                    <div class="col-md-6">
-                        <!-- Text Content -->
-                        <p>Your text goes here...</p>
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md">
                         <!-- Image Content -->
-                        <img src="{{ url_for('static', filename='images/dvc.jpg') }}" alt="Image Description"
-                             style="max-width: 200px;">
+                        <img src="{{ url_for('static', filename='images/slide2.png') }}" alt="Image Description">
                     </div>
                 </div>
             </div>
@@ -76,14 +68,9 @@ Gear Analysis
         <div class="carousel-item">
             <div class="container">
                 <div class="row justify-content-center align-items-center">
-                    <div class="col-md-6">
-                        <!-- Text Content -->
-                        <p>Your text goes here...</p>
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md">
                         <!-- Image Content -->
-                        <img src="{{ url_for('static', filename='images/dvc.jpg') }}" alt="Image Description"
-                             style="max-width: 200px;">
+                        <img src="{{ url_for('static', filename='images/slide3.png') }}" alt="Image Description" style="max-width: 50%;">
                     </div>
                 </div>
             </div>
@@ -109,22 +96,20 @@ Gear Analysis
     <div class="row">
         <!-- Section 2 -->
         <div class="col-md-6">
-            <h2>Section 2 Title</h2>
-            <p>In the manufacturing industry, reducing processing errors in the manufacturing process is important for
-                maximizing profits. In order to reduce processing errors, it is necessary to secure a budget for quality
-                assurance, implement manual inspection work, and review the manufacturing process. Particularly, the
-                inspection process is carried out by many companies, but there are problems such as uneven accuracy
-                depending on inspection workers and increased labor costs.</p>
+            <h2>Manufacturing Precision Focus</h2>
+            <p>In manufacturing, we target error reduction through budgeted quality assurance and critical process
+                reviews. Our tool addresses industry-wide challenges of manual inspection, evaluating the feasibility of
+                automating the process via machine learning in casting manufacturing. The curated dataset, featuring
+                labeled impeller images captured under controlled lighting, grounds our exploration of achieving
+                precision in manufacturing.</p>
         </div>
 
         <!-- Section 3 -->
         <div class="col-md-6">
-            <h2>Section 3 Title</h2>
-            <p>In the manufacturing industry, reducing processing errors in the manufacturing process is important for
-                maximizing profits. In order to reduce processing errors, it is necessary to secure a budget for quality
-                assurance, implement manual inspection work, and review the manufacturing process. Particularly, the
-                inspection process is carried out by many companies, but there are problems such as uneven accuracy
-                depending on inspection workers and increased labor costs.</p>
+            <h2>Casting Inspection Objectivity</h2>
+            <p>Objectively automating casting inspections, we leverage machine learning to overcome challenges in manual
+                methods. The curated dataset, with labeled impeller images captured under controlled lighting, signifies
+                the commitment to reliability and stability in achieving precision in manufacturing.</p>
         </div>
     </div>
 </div>
