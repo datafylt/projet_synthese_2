@@ -27,7 +27,8 @@ jobs:
         dvc repro
       env:
         GDRIVE_CREDENTIALS_DATA: '${{ secrets.GDRIVE_SERVICE_ACCOUNT_KEY }}'
-        IS_REMOTE: False
+        IS_REMOTE_S: 'remote'
+        IS_REMOTE: false
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
