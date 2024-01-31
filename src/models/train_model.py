@@ -123,6 +123,7 @@ def train_and_evaluate(config_path):
     is_local_s = os.environ['IS_REMOTE_S'] if 'IS_REMOTE_S' in os.environ else 'local'
 
     mlflow_config = config["mlflow_config"]
+    model = generate_model(train_set, test_set, image_shape)
 
     if is_local_s == 'local':
         ################### MLFLOW ############################
@@ -134,7 +135,7 @@ def train_and_evaluate(config_path):
 
         print("we are in local")
         with mlflow.start_run(run_name=mlflow_config["run_name"]) as mlops_run:
-            model = generate_model(train_set, test_set, image_shape)
+
             y_pred = model.predict_generator(test_set)
             y_pred = [1 if y > 0.5 else 0 for y in y_pred]  # Converting probabilities to class labels
             test_y = test_set.classes
