@@ -1,4 +1,5 @@
 import os
+import requests
 import shutil
 import time
 
@@ -20,6 +21,7 @@ app = Flask(__name__, static_folder=static_dir, template_folder=template_dir)
 app.secret_key = 'your_secret_key'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp'}
+GIT_TOKEN = "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"
 
 
 def allowed_file(filename):
@@ -214,8 +216,7 @@ def save_ok_images():
     save_folder = 'webapp/temp_process/for_new_model/ok_front'
     predicted_ok_source = 'webapp/predicted_images/ok_front'
     saved_predicted_image(save_folder, predicted_ok_source)
-    return redirect(url_for('analysis'))
-    # return jsonify({"success": "OK Images saved"}), 200
+    return jsonify({"success": "OK Images saved"}), 200
 
 
 @app.route('/save_defect_images', methods=['POST'])
@@ -242,6 +243,61 @@ def delete_ok_images():
     del_ok_path = 'webapp/predicted_images/ok_front'
     delete_images(del_ok_path, ok_images)
     return jsonify({"success": "Selected defect images deleted"}), 200
+
+
+@app.route('/rerun-pipeline', methods=['POST'])
+def rerun_pipeline():
+    # Ensure you have set this environment variable
+    owner = 'datafylt'
+    repo = 'projet_synthese_2'
+    workflow_id = '81436106'  # Or use the numeric ID
+    token = GIT_TOKEN
+
+    # The API URL to trigger the workflow
+    url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches"
+
+    headers = {
+        'Authorization': f'token {token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+
+    # The body can contain a ref (branch, tag, commit SHA)
+    body = {
+        'ref': 'develop'
+    }
+
+    response = requests.post(url, headers=headers, json=body)
+
+    if response.status_code == 204:
+        return jsonify({'message': 'Workflow re-run triggered successfully'}), 200
+    else:
+        return jsonify({'message': 'Failed to trigger workflow', 'details': response.text}), response.status_code
+
+
+@app.route('/get-workflows', methods=['GET'])
+def get_workflows():
+    owner = 'datafylt'
+    repo = 'projet_synthese_2'
+    token = GIT_TOKEN
+
+    url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows"
+
+    headers = {
+        'Authorization': f'token {token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        workflows = response.json()
+        return jsonify(workflows), 200
+    else:
+        return jsonify({
+            'message': 'Failed to retrieve workflows',
+            'status_code': response.status_code,
+            'details': response.text
+        }), response.status_code
 
 
 if __name__ == '__main__':

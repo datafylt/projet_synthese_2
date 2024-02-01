@@ -113,6 +113,25 @@ Gear Analysis
         </div>
     </div>
 </div>
+<!-- ... Other HTML content ... -->
+
+<!-- Add a Button to Trigger the Pipeline -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col text-center">
+            <button id="rerunPipelineButton" class="btn btn-primary">Re-run Pipeline</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add a Button to fetch workflows -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col text-center">
+            <button id="retrieveWorkflow" class="btn btn-primary">Retrieve Workflow</button>
+        </div>
+    </div>
+</div>
 
 <!-- Logos Section -->
 <div class="container mt-3">
@@ -171,4 +190,8 @@ Gear Analysis
 <!-- nav bar ends -->
 
 
+{% endblock %}
+
+{% block custom_js %}
+<script src="{{ url_for('static', filename='script/index.js') }}"></script>
 {% endblock %}

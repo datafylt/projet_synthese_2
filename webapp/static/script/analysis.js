@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // PhotoSwipe Initialization
     var pswpElement = document.querySelector('.pswp');
 
     if (!pswpElement) {
@@ -8,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var items = [];
     var links = document.querySelectorAll('.my-gallery a');
-    links.forEach(function (link, index) {
+    links.forEach(function (link) {
         var size = link.getAttribute('data-size').split('x');
         if (size.length === 2) {
             items.push({
@@ -32,19 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
         var options = {
             index: index,
             bgOpacity: 0.7,
-            showHideOpacity: true,
-            maxSpreadZoom: 3, // Increase this value to allow zooming beyond 100%
-            getDoubleTapZoom: function (isMouseClick, item) {
-                if (isMouseClick) {
-                    // Allow the mouse click to zoom to 100%
-                    return 1.5;
-                } else {
-                    // On double-tap, zoom to the maximum available image resolution
-                    return item.initialZoomLevel < 0.7 ? 3 : 1;
-                }
-            }
+            showHideOpacity: true
         };
-
         var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
         gallery.init();
     }
@@ -56,64 +46,104 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // Setup Delete Button and Confirmation Modal Logic
+    setupDeleteButtonAndModal();
 
-    var okDeleteButton = document.getElementById('okImageForm').querySelector('.btn-danger');
-    var confirmationModal = $('#confirmationModal');
+    // Handle OK Image Form Submission
+    document.getElementById('okImageForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        submitForm('/save_ok_images', this);
+    });
 
-    if (okDeleteButton) {
-        okDeleteButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            // Show the confirmation modal
-            confirmationModal.modal('show');
-        });
+    // Handle Defect Image Form Submission
+    document.getElementById('defectImageForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        submitForm('/save_defect_images', this);
+    });
+
+    function submitForm(url, formElement) {
+        var formData = new FormData(formElement);
+
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Refresh the page
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 
-    var defectDeleteButton = document.getElementById('defectImageForm').querySelector('.btn-danger');
+    function setupDeleteButtonAndModal() {
+        var okDeleteButton = document.getElementById('okImageForm').querySelector('.btn-danger');
+        var defectDeleteButton = document.getElementById('defectImageForm').querySelector('.btn-danger');
+        var confirmationModal = $('#confirmationModal');
+        var confirmDeletionButton = document.getElementById('confirmDeletion');
+        var selectedImagesType;
 
-    if (defectDeleteButton) {
-        defectDeleteButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            // Show the confirmation modal
-            confirmationModal.modal('show');
-        });
-    }
-
-    var confirmDeletionButton = document.getElementById('confirmDeletion');
-    var selectedImagesType; // Variable to store the type of images to delete
-
-    if (okDeleteButton) {
-        okDeleteButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            selectedImagesType = 'ok_images'; // Set the type of images to delete
-            confirmationModal.modal('show');
-        });
-    }
-
-    if (defectDeleteButton) {
-        defectDeleteButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            selectedImagesType = 'defect_images'; // Set the type of images to delete
-            confirmationModal.modal('show');
-        });
-    }
-
-    if (confirmDeletionButton) {
-        confirmDeletionButton.addEventListener('click', function () {
-            confirmationModal.modal('hide'); // Hide the modal immediately on confirmation
-
-            // Depending on the selected type, call the delete function
-            if (selectedImagesType === 'ok_images') {
-                console.log("inside ok delete...")
-                deleteImages('ok_images', '/delete_ok_images');
-            } else if (selectedImagesType === 'defect_images') {
-                console.log("inside def delete...")
-                deleteImages('defect_images', '/delete_defect_images');
+        function setupDeleteButton(deleteButton, imageType) {
+            if (deleteButton) {
+                deleteButton.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    selectedImagesType = imageType;
+                    confirmationModal.modal('show');
+                });
             }
-        });
+        }
+
+        setupDeleteButton(okDeleteButton, 'ok_images');
+        setupDeleteButton(defectDeleteButton, 'defect_images');
+
+        if (confirmDeletionButton) {
+            confirmDeletionButton.addEventListener('click', function () {
+                confirmationModal.modal('hide');
+                if (selectedImagesType === 'ok_images') {
+                    deleteImages('ok_images', '/delete_ok_images');
+                } else if (selectedImagesType === 'defect_images') {
+                    deleteImages('defect_images', '/delete_defect_images');
+                }
+            });
+        }
     }
 
+    function deleteImages(imageType, endpoint) {
+        var selectedImages = Array.from(document.querySelectorAll(`input[name="${imageType}"]:checked`))
+            .map(checkbox => checkbox.value);
 
+        var alertModal = $('#alertModal');
+        var alertModalBody = document.getElementById('alertModalBody');
+
+        if (selectedImages.length === 0) {
+            alertModalBody.textContent = 'Please select at least one image to delete.';
+            alertModal.modal('show');
+            return;
+        }
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({[imageType]: selectedImages})
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Refresh the page
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alertModal.modal('hide');
+            });
+    }
 });
+
 
 // Handle OK Image Form Submission
 document.getElementById('okImageForm').addEventListener('submit', function (event) {
@@ -172,8 +202,8 @@ function deleteImages(imageType, endpoint) {
         })
         .then(function (data) {
             console.log(data); // Handle success
-             $('#confirmationModal').modal('hide');
-             window.location.reload();
+            $('#confirmationModal').modal('hide');
+            window.location.reload();
         })
         .catch(function (error) {
             console.error(error); // Handle errors

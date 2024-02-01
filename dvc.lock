@@ -56,8 +56,8 @@ stages:
       nfiles: 6485
     - path: src/models/train_model.py
       hash: md5
-      md5: b11bbc7770f21b7d49e97466e4d8b628
-      size: 6928
+      md5: 01449128b921c35c1837f3428a1aa244
+      size: 6986
     params:
       params.yaml:
         random_forest.max_depth: 10
